@@ -1,7 +1,0 @@
-### Test phase results ###
-trialnum;id;wav1;wav2;correct;value;rt;correctness
-1;2;bada2.wav;bada3.wav;1;1;1154;1
-2;4;bada4.wav;bada3.wav;2;1;305;0
-3;1;bada1.wav;bada3.wav;1;1;817;1
-4;5;bada5.wav;bada3.wav;2;1;116;0
-5;3;bada3.wav;bada3.wav;1;1;7299;1
