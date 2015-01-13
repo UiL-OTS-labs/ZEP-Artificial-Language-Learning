@@ -1,14 +1,20 @@
 Experiment:
-        Auditory Identification with Yes-No Response
+        Artificial Language Learning Task
 
 Description:
-        Purpose of this experiment is to measure a participant's ability 
-        to identify (speech) sounds. For each trial a sound is presented. 
-        Participant's task is to jugdge whether a prespecified property is
-        present in the stimulus or not. Self-paced. Output: chosen value.
+        Purpose of this experiment is to let subject hear two different 
+        non-existing words and have them choose which word is correct.
+
+        This experiment is self paced.
+
+        Output: 
+                Response value;
+                Reaction time (milliseconds); 
+                Correctness (Yes/No);
+                Number of times repeated;
 
 Author:
-        Theo Veenker (UiL-OTS) <T.J.G.Veenker@uu.nl>
+        Jan de Mooij (UiL-OTS) <A.J.deMooij@uu.nl>
 
 Client:
         -
@@ -22,7 +28,7 @@ References:
 
 You can start up the experiment by typing:
 
-        zep ident_yn
+        zep artlanlrn.zep
 
 For more information on running the experiment and extracting the experiment
 results please go the the Zep website at http://www.hum.uu.nl/uilots/lab/zep
