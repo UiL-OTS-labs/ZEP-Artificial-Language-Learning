@@ -1,0 +1,3 @@
+### Test phase results ###
+trialnum;id;wav1;wav2;correct;value;rt;correctness;repeated
+1;2;bada2.wav;bada3.wav;1;-1;-9999;-1;31

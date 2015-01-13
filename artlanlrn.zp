@@ -1,0 +1,276 @@
+/******************************************************************************\
+FILE:           ident_yn.zp
+AUTHOR:         AUTHOR:         Jan de Mooij (UiL-OTS) <A.J.deMooij@uu.nl>
+ADAPTED BY:     -
+
+EXPERIMENT:     Artificial Language Learning Experiment with forced 
+                option choice (1 or 2)
+
+DESCRIPTION:
+
+Purpose of this experiment is to let subject hear two different 
+non-existing words and have them choose which word is correct.
+Output: Reaction time (milliseconds); Correctness (Yes/No)
+
+Based on ident_yn
+
+
+Global structure of experiment:
+
+  - welcome
+
+  - instructions
+
+  - practice phase (... trials)
+      trial
+
+  - Text that indicates practice is over and
+        listening will follow
+
+  - Artificial Language plays (passive)
+
+  - Text that indicates listening is over
+
+  - pause
+
+  - test phase (... trials)
+      trial
+
+  - thankyou
+
+
+HISTORY:
+2015-01-09 AJM   Created from ident_yn.
+
+\******************************************************************************/
+
+requires 1.6;
+
+import std_windows1;
+import std_texts_en;
+import std_entry_page1;
+import std_exit_page1;
+import std_pause_page;
+import std_blank_page;
+import std_sound_output_device;
+
+import test_page;
+import playaudio_page;
+
+
+Experiment experiment
+{
+    on_event:entry()
+    {
+        show_test_windows();
+    }
+
+
+    /**
+     * Welcome text
+     */
+    Part welcome
+    {
+        on_event:entry()
+        {
+            entry_page.set_text(WELCOME_TEXT);
+            entry_page.action(this, 0s);
+        }
+    }
+
+    /**
+     * Instructions text
+     */
+    Part instructions
+    {
+        on_event:entry()
+        {
+            pause_page.set_text(
+                "<b>Dear participant,</b>\n"
+                "\n"
+                "Thank you for participating in this experiment.\n"
+                "\n"
+                "We will start with a practice round\n"
+                "\n"
+                "<i>Hit Enter when ready to start.</i>", 
+                true);
+
+            pause_page.action(this);
+        }
+    }
+
+    /**
+     * Practice trials
+     */
+    Block practice
+    {
+        TestItem        item;   // current item
+
+
+        on_event:entry()
+        {
+            num_cycles = test_prac_items.size;
+
+            // Prepare test page: progress bar and prompt enabled.
+            test_page.setup(num_cycles, true);
+        }
+
+
+        on_event:exit()
+        {
+            test_page.cleanup();
+        }
+
+
+        Trial trial
+        {
+            on_event:entry()
+            {
+                item = test_prac_items[practice.cycle];
+
+                test_page.action(this, item, reference_time, practice.cycle);
+            }
+        }
+    }
+
+    /**
+     * Text to indicate practice trials have finished
+     * and that artificial language will now be played,
+     * after which the experiment will start
+     */
+    Part pause
+    {
+        on_event:entry()
+        {
+            pause_page.set_text(
+                "End of the practice part.\n"
+                "\n"
+                "If you have any questions at this moment please ask the "
+                "experimenter now.\n"
+                "\n"
+                "<i>Hit Enter when ready to proceed.</i>\n\n"
+                "You will then listen to a new/Martian language;\n"
+                "You do not have to do anything, just listen", 
+                true);
+
+            pause_page.action(this);
+        }
+    }
+
+    /**
+     * Artificial language file plays.
+     * Set which audio file in defs.zm
+     */
+    Block artificialLanguage
+    {
+        on_event:entry()
+        {
+            playaudio_page.action(this, reference_time);
+        }
+    }
+
+    /**
+     * Text to indicate (passive) listening is over
+     * and that experiment will start
+     */
+    Part finishedListening
+    {
+        on_event:entry()
+        {
+            pause_page.set_text(
+                "Listening is now over.\n"
+                "Continue to the\n"
+                "\n<i>Hit Enter when ready to proceed.</i>"
+                ,true);
+
+            pause_page.action(this);
+        }
+    }
+
+    Part
+    {
+        on_event:entry()
+        {
+            blank_page.action_auto(this, 500ms);
+        }
+    }
+
+
+    /**
+     * Actual experiment
+     */
+    Block test
+    {
+        TestItem        item;   // current item
+
+
+        on_event:entry()
+        {
+            // Randomize test items table.
+            if (shuffle_test_items() != OK) terminate;
+
+            num_cycles = test_items.size;
+
+            // Prepare test page: progress bar enabled, prompt disabled.
+            test_page.setup(num_cycles, false);
+        }
+
+
+        on_event:exit()
+        {
+            test_page.cleanup();
+
+            // Save test phase output table as CSV file.
+            test_output_save();
+        }
+
+
+        Trial trial
+        {
+            on_event:entry()
+            {
+                item = test_items[test.cycle];
+
+                test_page.action(this, item, reference_time, test.cycle);
+            }
+
+
+            on_event:exit()
+            {
+                // Add new row to test output table.
+                TestOutput output;
+                output.trialnum = test.cycle + 1;
+                output.id = item.id;
+                output.wav1 = item.wav1;
+                output.wav2 = item.wav2;
+                output.correct = item.correct;
+                output.value = test_page.response.value;
+                output.correctness = test_page.response.correctness;
+                output.rt = test_page.response.rt;
+                output.repeated = test_page.response.repeated;
+                test_output_append(output);
+            }
+        }
+    }
+
+
+    Part
+    {
+        on_event:entry()
+        {
+            blank_page.action_auto(this, 500ms, 500ms);
+        }
+    }
+
+
+    Part thankyou
+    {
+        on_event:entry()
+        {
+            control.end_experiment();   // Check-in session.
+
+            exit_page.set_text(THANK_YOU_TEXT);
+            exit_page.action(this, 10s);
+        }
+    }
+}

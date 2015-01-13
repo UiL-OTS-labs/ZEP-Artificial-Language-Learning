@@ -1,0 +1,90 @@
+/******************************************************************************\
+FILE:           playaudio_page.zm
+AUTHOR:         Jan de Mooij (UiL-OTS) <A.J.deMooij@uu.nl>
+ADAPTED BY:     -
+
+DESCRIPTION:
+
+Provides a page object to show to the participant in between the test trials
+and the actual trials.
+It plays a single audio clip, as defined in defs.zm
+
+
+HISTORY:
+2015-01-09 AJM   Created
+
+\******************************************************************************/
+
+Page playaudio_page
+{
+	init()
+    {
+        fill_pattern_color = ENTRY_PAGE_COLOR;
+    }
+
+    SoundChain stimulus
+    {
+        // Sound source/producer object.
+        SoundFile clip {}
+        
+        // Sound sink/consumer object.
+        SoundPlayback playback {}
+
+        time play(time t)
+        {
+            abort();
+
+            playback.device = sound_output_device;
+            clip.file = stimuli_dir() + "sounds/" + ART_LANG_SOUND;
+
+            start(t);
+
+            return expected_finish_time;
+        }
+
+        on_event:finish()
+        {
+            done(CONTINUE);
+        }
+    }
+
+    // Performs preparatory work required before using this page.
+    void setup(int ntrials=-1, bool pr=false)
+    {
+        test_page_overlay.setup(this);
+
+        // Enable or disable the progress bar.
+        test_page_overlay.show_progress_bar(ntrials);   // disabled if < 0
+    }
+
+
+    // Performs cleaning up if necessary.
+    void cleanup()
+    {
+        test_page_overlay.cleanup();
+    }
+
+    // Aborts any ongoing activity on this page and signals the initiator
+    // of the trial that we're done.
+    void done(int msgid)
+    {
+        signal_target(msgid);   // tell caller we're done
+        target = null;
+
+        control.clear_status();
+    }
+
+    void action(Object caller, time tref)
+    {
+        // Show this page (if not yet done) and make tref the trial start time.
+        tref = test_window1.show_test_page(this, tref + INTERTRIAL_INTERVAL);
+
+    	stimulus.play(tref);
+
+    	// Update status line on control window. Cleared in done() above.
+        control.set_status("Artificial Language plays");
+
+        // Remember who to signal when the trial is over.
+        target = caller;
+    }
+}

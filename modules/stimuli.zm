@@ -1,0 +1,46 @@
+/******************************************************************************\
+FILE:           stimuli.zm
+AUTHOR:         Jan de Mooij (UiL-OTS) <A.J.deMooij@uu.nl>
+ADAPTED BY:     -
+
+DESCRIPTION:
+
+Defines the formats of item table(s) and provides the actual content of
+the item table(s) i.e. stimulus information.
+
+
+HISTORY:
+2015-01-09 AJM   Created from ident_yn.
+
+\******************************************************************************/
+
+
+// Item record used for the test phase item table.
+record TestItem
+{
+    int         id;             // item id
+    string      wav1;           // Stimilus 1 sound filename
+    string      wav2;           // stimulus 2 sound filename
+    int         correct;        // The correct answer
+}
+
+
+// Item table used in the practice phase before the test phase.
+//   index: item number
+TestItem[..] test_prac_items =
+{
+    {1, "bada1.wav", "bada5.wav", 1},
+    {2, "bada5.wav", "bada3.wav", 2},
+};
+
+
+// Item table used in the test phase.
+//   index: item number
+TestItem[..] test_items =
+{
+    {1, "bada1.wav", "bada3.wav", 1},
+    {2, "bada2.wav", "bada3.wav", 1},
+    {3, "bada3.wav", "bada3.wav", 1},
+    {4, "bada4.wav", "bada3.wav", 2},
+    {5, "bada5.wav", "bada3.wav", 2},
+};

@@ -1,0 +1,7 @@
+### Test phase results ###
+trialnum;id;type;sndfn;value
+1;4;S4;bada4.wav;0
+2;3;S3;bada3.wav;0
+3;5;S5;bada5.wav;1
+4;1;S1;bada1.wav;1
+5;2;S2;bada2.wav;0
