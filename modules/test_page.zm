@@ -144,12 +144,14 @@ Page test_page
                 font_size = TEST_PAGE_BUTTON_FONT_SIZE;
                 fill_pattern_color = TEST_PAGE_BUTTON_COLOR;
                 text_color = TEST_PAGE_BUTTON_TEXT_COLOR;
+                
+                // Only show when set in defs
+                is_visible = SHOW_REPEAT_BUTTON;
             }
 
 
             on_event:activate()
             {
-                //stimulus.play(event_time + 100ms);
                 start_stimulus(event_time + 100ms);
                 response.repeated++;
             }
@@ -241,7 +243,7 @@ Page test_page
             value = -1;
             rt = -9999;
             correctness = -1;
-            repeated = 0;
+            repeated = (SHOW_REPEAT_BUTTON) ? 0 : -1;
         }
 
 

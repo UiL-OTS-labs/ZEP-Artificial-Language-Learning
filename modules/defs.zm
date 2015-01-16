@@ -58,6 +58,11 @@ const dur       FIXATION_DURATION               = 1000ms;
 
 
 
+// Wether a repeat button is shown to the participant or not
+const bool 		SHOW_REPEAT_BUTTON = true;
+
+
+
 // Link to the artificial language sound file
 // This sound will play during the `artificialLanguage` block
 const string 	ART_LANG_SOUND					= "bada1.wav";
